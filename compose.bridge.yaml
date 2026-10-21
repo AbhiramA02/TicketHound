@@ -1,0 +1,67 @@
+# Optional bridge-network Compose file for Docker Desktop (macOS/Windows).
+# Use when host networking is unavailable:
+#   docker compose -f compose.bridge.yaml up --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tickethound
+      POSTGRES_PASSWORD: tickethound
+      POSTGRES_DB: tickethound
+    ports:
+      - "5432:5432"
+    volumes:
+      - tickethound_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickethound -d tickethound"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./services/api
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DATABASE_URL: postgresql+psycopg://tickethound:tickethound@db:5432/tickethound
+      DEMO_MODE: "true"
+      PROVIDER_DEMO_ENABLED: "true"
+      PROVIDER_TICKETMASTER_ENABLED: "false"
+      CORS_ORIGINS: http://localhost:43123,http://127.0.0.1:43123
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+      API_BASE_URL: http://host.docker.internal:8000
+      PORT: "43123"
+    ports:
+      - "43123:43123"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  tickethound_pg:
