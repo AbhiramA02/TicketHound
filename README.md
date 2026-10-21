@@ -21,6 +21,28 @@ Then open:
 
 Default Compose credentials are local-only (`tickethound` / `tickethound`). Never put real API keys in git.
 
+**Compose networking:** the default `compose.yaml` uses Linux **host networking** so API↔Postgres works in constrained Docker environments. On Docker Desktop (macOS/Windows), use:
+
+```bash
+docker compose -f compose.bridge.yaml up --build
+```
+
+### Verified locally (Phase 0)
+
+```text
+curl http://127.0.0.1:8000/api/v1/health
+→ status=ok, demo_mode=true, database=up
+
+curl http://127.0.0.1:8000/api/v1/events
+→ meta.data_status=DEMO, 3 synthetic games
+
+curl -I http://127.0.0.1:43123/
+→ 200, page contains "DEMO DATA" + TicketHound brand
+
+cd services/api && ruff check app tests && pytest -q
+→ All checks passed; 6 passed
+```
+
 ## Without rebuilding the web image (dev)
 
 ```bash
