@@ -43,8 +43,25 @@ class EventSummary(BaseModel):
     local_start_at: datetime
     status: EventStatus
     data_status: DataStatus
+    season_type: str | None = None
+    provider_code: str | None = None
+    source_url: str | None = None
+    source_observed_at: datetime | None = None
     lowest_all_in_price_minor: int | None = None
+    price_min_minor: int | None = None
+    price_max_minor: int | None = None
+    price_basis: PriceBasis | None = None
+    price_granularity: Granularity | None = None
     currency: str | None = None
+
+
+class TeamDirectoryEntry(BaseModel):
+    id: UUID
+    nba_team_id: str
+    name: str
+    abbreviation: str
+    city: str
+    aliases: list[str]
 
 
 class Offer(BaseModel):

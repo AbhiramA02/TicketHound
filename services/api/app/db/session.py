@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Generator
 
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import get_settings
@@ -14,7 +15,7 @@ class Base(DeclarativeBase):
     pass
 
 
-def create_db_engine():
+def create_db_engine() -> Engine:
     settings = get_settings()
     return create_engine(settings.database_url, pool_pre_ping=True)
 

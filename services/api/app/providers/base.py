@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Protocol
 
 from pydantic import BaseModel, Field
@@ -27,6 +28,8 @@ class TicketProvider(Protocol):
         self,
         *,
         team: str | None = None,
+        start: date | None = None,
+        end: date | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> tuple[list[EventSummary], int]: ...

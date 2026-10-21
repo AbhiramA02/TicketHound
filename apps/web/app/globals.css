@@ -105,6 +105,33 @@ a {
   color: var(--demo);
 }
 
+.provenance-banner--live {
+  border-color: rgba(61, 207, 142, 0.45);
+  background: rgba(61, 207, 142, 0.1);
+  color: #d7ffe9;
+}
+
+.provenance-banner--live .demo-banner__tag,
+.provenance-banner--cached .demo-banner__tag {
+  color: var(--ok);
+}
+
+.provenance-banner--cached {
+  border-color: rgba(61, 207, 142, 0.3);
+  background: rgba(61, 207, 142, 0.06);
+  color: #d7ffe9;
+}
+
+.provenance-banner--unavailable {
+  border-color: rgba(255, 92, 92, 0.45);
+  background: rgba(255, 92, 92, 0.1);
+  color: #ffd0d0;
+}
+
+.provenance-banner--unavailable .demo-banner__tag {
+  color: var(--danger);
+}
+
 .hero {
   display: grid;
   gap: 1.25rem;
@@ -194,8 +221,9 @@ a {
 
 .search-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  width: min(100%, 360px);
+  width: min(100%, 520px);
 }
 
 .search-form input {

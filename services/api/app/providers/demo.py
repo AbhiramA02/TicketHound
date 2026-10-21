@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
 from app.providers.base import ProviderCapabilities
@@ -199,31 +199,36 @@ class DemoProvider:
         self,
         *,
         team: str | None = None,
+        start: date | None = None,
+        end: date | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> tuple[list[EventSummary], int]:
-        items = self._events
+        items = sorted(self._events, key=lambda event: event.start_at_utc)
         if team:
             needle = team.strip().lower()
             items = [
-                e
-                for e in items
+                event
+                for event in items
                 if needle
                 in {
-                    e.home_team.name.lower(),
-                    e.home_team.abbreviation.lower(),
-                    e.home_team.city.lower(),
-                    e.away_team.name.lower(),
-                    e.away_team.abbreviation.lower(),
-                    e.away_team.city.lower(),
+                    event.home_team.name.lower(),
+                    event.home_team.abbreviation.lower(),
+                    event.home_team.city.lower(),
+                    event.away_team.name.lower(),
+                    event.away_team.abbreviation.lower(),
+                    event.away_team.city.lower(),
                 }
-                or needle in e.home_team.name.lower()
-                or needle in e.away_team.name.lower()
+                or needle in event.home_team.name.lower()
+                or needle in event.away_team.name.lower()
             ]
+        if start is not None:
+            items = [event for event in items if event.start_at_utc.date() >= start]
+        if end is not None:
+            items = [event for event in items if event.start_at_utc.date() <= end]
         total = len(items)
-        start = (page - 1) * page_size
-        end = start + page_size
-        return items[start:end], total
+        offset = (page - 1) * page_size
+        return items[offset : offset + page_size], total
 
     async def get_event(self, event_id: str) -> EventSummary | None:
         try:

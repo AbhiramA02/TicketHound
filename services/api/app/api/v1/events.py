@@ -1,6 +1,8 @@
-"""Event list/detail/offers routes (Phase 0 demo-backed)."""
+"""Event list/detail/offers routes."""
 
 from __future__ import annotations
+
+from datetime import date
 
 from fastapi import APIRouter, Depends, Query
 
@@ -19,11 +21,19 @@ def get_catalog(settings: Settings = Depends(get_settings)) -> CatalogService:
 @router.get("")
 async def list_events(
     team: str | None = Query(default=None, description="Team name, city, or abbreviation"),
+    start: date | None = Query(default=None, description="Inclusive local/UTC calendar start"),
+    end: date | None = Query(default=None, description="Inclusive calendar end"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
     catalog: CatalogService = Depends(get_catalog),
 ) -> ApiResponse[PaginatedData[EventSummary]]:
-    return await catalog.list_events(team=team, page=page, page_size=page_size)
+    return await catalog.list_events(
+        team=team,
+        start=start,
+        end=end,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.get("/{event_id}")

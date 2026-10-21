@@ -34,7 +34,15 @@ export type EventSummary = {
   local_start_at: string;
   status: string;
   data_status: DataStatus;
+  season_type: string | null;
+  provider_code: string | null;
+  source_url: string | null;
+  source_observed_at: string | null;
   lowest_all_in_price_minor: number | null;
+  price_min_minor: number | null;
+  price_max_minor: number | null;
+  price_basis: string | null;
+  price_granularity: string | null;
   currency: string | null;
 };
 
@@ -128,9 +136,44 @@ export function formatGameWhen(isoLocal: string, isoUtc: string): string {
   }).format(d);
 }
 
-export async function fetchEvents(team?: string): Promise<ApiResponse<PaginatedEvents>> {
+export function formatEventPrice(event: EventSummary): { amount: string; caption: string } {
+  if (event.data_status === "DEMO" && event.lowest_all_in_price_minor != null) {
+    return {
+      amount: formatUsdFromMinor(event.lowest_all_in_price_minor),
+      caption: "DEMO all-in from",
+    };
+  }
+  if (event.price_min_minor != null) {
+    const max =
+      event.price_max_minor != null ? `–${formatUsdFromMinor(event.price_max_minor)}` : "";
+    return {
+      amount: `${formatUsdFromMinor(event.price_min_minor)}${max}`,
+      caption: "event-level range",
+    };
+  }
+  return { amount: "—", caption: "no event price" };
+}
+
+export function formatObserved(iso: string | null): string {
+  if (!iso) return "not recorded";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(new Date(iso));
+}
+
+export async function fetchEvents(filters?: {
+  team?: string;
+  start?: string;
+  end?: string;
+}): Promise<ApiResponse<PaginatedEvents>> {
   const params = new URLSearchParams();
-  if (team) params.set("team", team);
+  if (filters?.team) params.set("team", filters.team);
+  if (filters?.start) params.set("start", filters.start);
+  if (filters?.end) params.set("end", filters.end);
   const q = params.toString();
   return getJson(`/api/v1/events${q ? `?${q}` : ""}`);
 }

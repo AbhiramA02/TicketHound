@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, Text, UniqueConstraint, func
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -55,6 +55,9 @@ class Event(Base):
     start_at_utc: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     local_start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[str] = mapped_column(String(32), default="SCHEDULED")
+    season_type: Mapped[str] = mapped_column(
+        String(16), default="regular", server_default="regular"
+    )
     last_verified_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
@@ -62,3 +65,30 @@ class Event(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+
+
+class ProviderEvent(Base):
+    """Link from a canonical game to one provider's event id."""
+
+    __tablename__ = "provider_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "provider_code",
+            "provider_event_id",
+            name="uq_provider_events_provider_event",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("events.id"), nullable=False, index=True
+    )
+    provider_code: Mapped[str] = mapped_column(String(32), nullable=False)
+    provider_event_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    external_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    matched_method: Mapped[str] = mapped_column(String(64), nullable=False)
+    match_confidence: Mapped[float] = mapped_column(Numeric(4, 3), nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    price_min_minor: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    price_max_minor: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    price_currency: Mapped[str | None] = mapped_column(String(8), nullable=True)

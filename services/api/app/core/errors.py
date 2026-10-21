@@ -81,6 +81,6 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=400,
             code="validation_error",
             message="Request validation failed",
-            details=exc.errors(),
+            details=list(exc.errors()),
             request_id=request.headers.get("x-request-id"),
         )

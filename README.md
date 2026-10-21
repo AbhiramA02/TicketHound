@@ -2,7 +2,7 @@
 
 > Stop opening five tabs to buy NBA tickets. TicketHound helps fans find affordable NBA game tickets across supported marketplaces, compares seat value, tracks price history, and eventually estimates when buying may be advantageous.
 
-**Phase:** 0 — Foundation (DEMO data only)  
+**Phase:** 1 — NBA event discovery (DEMO by default; Ticketmaster Discovery when configured)  
 **Stack:** Next.js (TypeScript) · FastAPI · PostgreSQL · Docker Compose
 
 ## Quick start
@@ -85,7 +85,9 @@ CI runs the same gates on push/PR (see `.github/workflows/ci.yml`).
 | `DEMO` | Synthetic fixtures (Phase 0 default) |
 | `UNAVAILABLE` | Disabled / failing / not integrated |
 
-Flags: `DEMO_MODE`, `PROVIDER_DEMO_ENABLED`, `PROVIDER_TICKETMASTER_ENABLED` (off until Phase 1 + key).
+Flags: `DEMO_MODE`, `PROVIDER_DEMO_ENABLED`, `PROVIDER_TICKETMASTER_ENABLED`.
+
+Discovery runs only when `DEMO_MODE=false`, `PROVIDER_TICKETMASTER_ENABLED=true`, and `TICKETMASTER_API_KEY` is set. Otherwise the UI stays on the labeled DEMO catalog. Discovery returns events and, at most, an event-level price range. It does not return seat listings.
 
 ## Docs
 
@@ -106,4 +108,4 @@ compose.yaml        Postgres + API + web
 
 ## What Phase 0 does **not** include
 
-Live Ticketmaster discovery, real marketplace listings, auth, alerts, Redis/Celery, ML.
+Live Ticketmaster seat inventory, real marketplace listings, auth, alerts, Redis/Celery, ML. Discovery event search is included when a key is configured; without one, the app stays on DEMO.

@@ -1,0 +1,112 @@
+{
+  "page": {
+    "size": 20,
+    "totalElements": 3,
+    "totalPages": 1,
+    "number": 0
+  },
+  "_embedded": {
+    "events": [
+      {
+        "id": "vvG1LakersCeltics",
+        "name": "Boston Celtics at Los Angeles Lakers",
+        "url": "https://www.ticketmaster.com/event/vvG1LakersCeltics",
+        "dates": {
+          "start": {
+            "localDate": "2026-11-07",
+            "localTime": "19:30:00",
+            "dateTime": "2026-11-08T03:30:00Z"
+          },
+          "timezone": "America/Los_Angeles",
+          "status": { "code": "onsale" }
+        },
+        "classifications": [
+          {
+            "primary": true,
+            "segment": { "name": "Sports" },
+            "genre": { "name": "Basketball" },
+            "subGenre": { "name": "NBA" }
+          }
+        ],
+        "priceRanges": [
+          { "type": "standard", "currency": "USD", "min": 48.0, "max": 420.0 }
+        ],
+        "_embedded": {
+          "venues": [
+            {
+              "name": "Crypto.com Arena",
+              "city": { "name": "Los Angeles" },
+              "state": { "name": "California", "stateCode": "CA" },
+              "timezone": "America/Los_Angeles"
+            }
+          ]
+        }
+      },
+      {
+        "id": "vvG1LakersWarriorsLate",
+        "name": "Golden State Warriors at Los Angeles Lakers",
+        "url": "https://www.ticketmaster.com/event/vvG1LakersWarriorsLate",
+        "dates": {
+          "start": {
+            "localDate": "2026-11-07",
+            "localTime": "22:00:00",
+            "dateTime": "2026-11-08T06:00:00Z"
+          },
+          "timezone": "America/Los_Angeles",
+          "status": { "code": "onsale" }
+        },
+        "classifications": [
+          {
+            "segment": { "name": "Sports" },
+            "genre": { "name": "Basketball" },
+            "subGenre": { "name": "NBA" }
+          }
+        ],
+        "priceRanges": [
+          { "type": "standard", "currency": "USD", "min": 55.0, "max": 300.0 }
+        ],
+        "_embedded": {
+          "venues": [
+            {
+              "name": "Crypto.com Arena",
+              "city": { "name": "Los Angeles" },
+              "state": { "stateCode": "CA" },
+              "timezone": "America/Los_Angeles"
+            }
+          ]
+        }
+      },
+      {
+        "id": "vvConcertLakersNight",
+        "name": "Lakers House Band",
+        "url": "https://www.ticketmaster.com/event/vvConcertLakersNight",
+        "dates": {
+          "start": {
+            "localDate": "2026-11-07",
+            "localTime": "20:00:00",
+            "dateTime": "2026-11-08T04:00:00Z"
+          },
+          "timezone": "America/Los_Angeles",
+          "status": { "code": "onsale" }
+        },
+        "classifications": [
+          {
+            "segment": { "name": "Music" },
+            "genre": { "name": "Rock" },
+            "subGenre": { "name": "Pop" }
+          }
+        ],
+        "_embedded": {
+          "venues": [
+            {
+              "name": "Crypto.com Arena",
+              "city": { "name": "Los Angeles" },
+              "state": { "stateCode": "CA" },
+              "timezone": "America/Los_Angeles"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

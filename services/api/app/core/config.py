@@ -29,6 +29,9 @@ class Settings(BaseSettings):
 
     # Reserved for Phase 1+ (loaded only when enabled; never log the value)
     ticketmaster_api_key: str | None = None
+    ticketmaster_base_url: str = "https://app.ticketmaster.com/discovery/v2"
+    ticketmaster_min_interval_seconds: float = 0.5
+    ticketmaster_timeout_seconds: float = 10.0
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -14,7 +14,7 @@ router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
-def health() -> dict:
+def health() -> dict[str, object]:
     settings = get_settings()
     db_ok = check_database()
     return {

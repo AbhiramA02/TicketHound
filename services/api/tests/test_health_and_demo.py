@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from unittest.mock import patch
 
 import pytest
@@ -11,7 +12,7 @@ from app.main import create_app
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client() -> Iterator[TestClient]:
     with patch("app.api.v1.health.check_database", return_value=True):
         app = create_app()
         with TestClient(app) as c:
