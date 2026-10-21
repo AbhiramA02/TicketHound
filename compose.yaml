@@ -1,0 +1,63 @@
+# Local development stack.
+# Uses host networking on Linux so published services can talk reliably in
+# constrained Docker environments where bridge container-to-container TCP fails.
+# On macOS/Windows Docker Desktop, prefer the bridge overlay in compose.bridge.yaml
+# (see README) or run API/web on the host against `docker compose up db`.
+
+services:
+  db:
+    image: postgres:16-alpine
+    network_mode: host
+    environment:
+      POSTGRES_USER: tickethound
+      POSTGRES_PASSWORD: tickethound
+      POSTGRES_DB: tickethound
+    volumes:
+      - tickethound_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickethound -d tickethound -h 127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./services/api
+    network_mode: host
+    environment:
+      DATABASE_URL: postgresql+psycopg://tickethound:tickethound@127.0.0.1:5432/tickethound
+      DEMO_MODE: "true"
+      PROVIDER_DEMO_ENABLED: "true"
+      PROVIDER_TICKETMASTER_ENABLED: "false"
+      CORS_ORIGINS: http://localhost:43123,http://127.0.0.1:43123
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+    network_mode: host
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+      API_BASE_URL: http://127.0.0.1:8000
+      PORT: "43123"
+      HOSTNAME: "0.0.0.0"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  tickethound_pg:

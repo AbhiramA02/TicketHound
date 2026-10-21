@@ -1,0 +1,38 @@
+# Secrets & local env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Node / Next
+**/node_modules/
+**/.next/
+**/out/
+**/coverage/
+apps/web/next-env.d.ts.bak
+
+# Docker
+*.log
+
+# Misc
+dist/
+build/
+tmp-web/
